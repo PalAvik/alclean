@@ -1,0 +1,15 @@
+torch
+torchvision
+torchaudio
+yacs
+matplotlib
+numpy
+pandas
+tensorboard
+tensorboardX
+wget
+scikit-image
+scikit-learn
+scipy
+seaborn
+wandb
