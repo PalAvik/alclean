@@ -66,7 +66,7 @@ def override_config(source: ConfigNode, overrides: ConfigNode) -> ConfigNode:
     Overrides the keys and values present in node `overrides` into source object recursively.
     '''
     for key, value in overrides.items():
-        if isinstance(value, collections.Mapping) and value:
+        if isinstance(value, collections.abc.Mapping) and value:
             returned = override_config(source.get(key, {}), value)  # type: ignore
             returned = CfgNode(returned)
             source[key] = returned

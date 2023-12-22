@@ -19,4 +19,4 @@ source activate alclean
 srun python3 -m pip uninstall AL_cleaning -y
 srun python3 -m pip install -e .
 
-python AL_cleaning/training_scripts/train.py  --config AL_cleaning/configs/models/cifar10h_noise_15/resnet.yaml
+python AL_cleaning/training_scripts/train.py  --config AL_cleaning/configs/models/cifar10h_noise_15/resnet_co_teaching.yaml

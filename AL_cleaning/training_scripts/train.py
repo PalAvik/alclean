@@ -4,6 +4,7 @@ import os
 
 from AL_cleaning.configs.config_node import ConfigNode
 from AL_cleaning.training_scripts.utils import create_logger, get_run_config, load_model_config
+from AL_cleaning.training_scripts.trainers.co_teaching_trainer import CoTeachingTrainer
 from AL_cleaning.training_scripts.trainers.vanilla_trainer import VanillaTrainer
 from AL_cleaning.utils.generics import set_seed
 import wandb
@@ -15,7 +16,10 @@ wandb.init(project="AL_cleaning", sync_tensorboard=True)
 def train(config: ConfigNode) -> None:
     create_logger(config.train.output_dir)
     logging.info('Starting training...')
-    model_trainer_class = VanillaTrainer  # type: ignore
+    if config.train.use_co_teaching:
+        model_trainer_class = CoTeachingTrainer
+    else:
+        model_trainer_class = VanillaTrainer  # type: ignore
     model_trainer_class(config).run_training()
 
 
