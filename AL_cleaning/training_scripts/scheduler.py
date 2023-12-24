@@ -23,6 +23,7 @@ class ForgetRateScheduler(object):
         logging.info(f"No samples will be excluded in co-teaching for the first {num_warmup_epochs} epochs.")
         if num_gradual <= num_warmup_epochs:
             logging.warning(f"Num gradual {num_gradual} <= num warm up epochs. This argument will be ignored.")
+        forget_rate = max(0., min(forget_rate, 1.))
         assert 0 <= forget_rate < 1.
         self.forget_rate_schedule = np.ones(num_epochs) * forget_rate
         self.forget_rate_schedule[:num_gradual] = np.linspace(0, forget_rate, num_gradual)

@@ -22,10 +22,6 @@ from AL_cleaning.selection.simulation import DataCurationSimulator
 from AL_cleaning.selection.simulation_statistics import SimulationStats, SimulationStatsDistribution
 from AL_cleaning.utils.dataset_utils import load_dataset_and_initial_labels_for_simulation
 from AL_cleaning.utils.generics import create_folder, get_data_selection_parser, get_logger, set_seed
-import wandb
-
-# Start a wandb run with `sync_tensorboard=True`
-wandb.init(project="AL_cleaning", sync_tensorboard=True)
 
 
 EXP_OUTPUT_DIR = MAIN_SIMULATION_DIR / datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')

@@ -15,3 +15,7 @@ seaborn
 joblib
 h5py
 wandb
+networkx
+pydot
+nltk
+tqdm

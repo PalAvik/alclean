@@ -75,7 +75,7 @@ class RandomAffine(BaseTransform):
 
 class Resize(BaseTransform):
     def __init__(self, config: ConfigNode):
-        self.transform = torchvision.transforms.Resize(config.preprocess.resize)
+        self.transform = torchvision.transforms.Resize((config.preprocess.resize, config.preprocess.resize))
 
 
 class RandomColorJitter(BaseTransform):

@@ -4,12 +4,14 @@ from typing import Any, Tuple, Type
 import PIL.Image
 import numpy as np
 import torch
-from torchvision.datasets import CIFAR10
 from torchvision.datasets.vision import VisionDataset
 
-from default_paths import CIFAR10_ROOT_DIR
+from default_paths import CIFAR10_ROOT_DIR, IMAGENETDOGS_ROOT_DIR
 from AL_cleaning.configs.config_node import ConfigNode
+from AL_cleaning.datasets.cifar10_idn import CIFAR10IDN
+from AL_cleaning.datasets.cifar10 import CIFAR10Original
 from AL_cleaning.datasets.cifar10h import CIFAR10H
+from AL_cleaning.datasets.imagenetdogs import IMAGENETDOGS
 from AL_cleaning.training_scripts.create_dataset_transforms import create_transform
 from AL_cleaning.training_scripts.utils import load_selector_config
 from AL_cleaning.utils.generics import convert_labels_to_one_hot
@@ -66,19 +68,43 @@ def get_datasets(config: ConfigNode,
                                                        noise_temperature=config.dataset.noise_temperature,
                                                        noise_offset=config.dataset.noise_offset,
                                                        num_samples=num_samples)
-        val_dataset = dataset_with_indices(CIFAR10)(root=str(CIFAR10_ROOT_DIR),
-                                                    train=True,
-                                                    transform=create_transform(config, is_train=False))
+        val_dataset = dataset_with_indices(CIFAR10Original)(root=str(CIFAR10_ROOT_DIR),
+                                                            train=True,
+                                                            transform=create_transform(config, is_train=False))
 
+    elif config.dataset.name == "CIFAR10IDN":
+        train_dataset = dataset_with_indices(CIFAR10IDN)(root=str(CIFAR10_ROOT_DIR),
+                                                         train=False,
+                                                         transform=create_transform(config, is_train=True),
+                                                         noise_rate=config.dataset.noise_rate,
+                                                         use_fixed_labels=use_fixed_labels)
+        val_dataset = dataset_with_indices(CIFAR10IDN)(root=str(CIFAR10_ROOT_DIR),
+                                                       train=True,
+                                                       transform=create_transform(config, is_train=False),
+                                                       noise_rate=config.dataset.noise_rate,
+                                                       use_fixed_labels=use_fixed_labels)
+    
+    elif config.dataset.name == "IMAGENETDOGS":
+        train_dataset = dataset_with_indices(IMAGENETDOGS)(root=str(IMAGENETDOGS_ROOT_DIR),
+                                                           train=True,
+                                                           noise_rate=config.dataset.noise_rate,
+                                                           transform=create_transform(config, is_train=True),
+                                                           noise_temperature=config.dataset.noise_temperature)
+        val_dataset = dataset_with_indices(IMAGENETDOGS)(root=str(IMAGENETDOGS_ROOT_DIR),
+                                                         train=False,
+                                                         noise_rate=config.dataset.noise_rate,
+                                                         transform=create_transform(config, is_train=False),
+                                                         noise_temperature=config.dataset.noise_temperature)
+    
     # Default CIFAR10 training and validation sets
     elif config.dataset.name == 'CIFAR10':
         if num_samples is not None:
             raise ValueError("Dataset subset selection is not implemented for default CIFAR10.")
 
-        train_dataset = dataset_with_indices(CIFAR10)(root=str(CIFAR10_ROOT_DIR),
+        train_dataset = dataset_with_indices(CIFAR10Original)(root=str(CIFAR10_ROOT_DIR),
                                                       train=True,
                                                       transform=create_transform(config, use_augmentation))
-        val_dataset = dataset_with_indices(CIFAR10)(root=str(CIFAR10_ROOT_DIR),
+        val_dataset = dataset_with_indices(CIFAR10Original)(root=str(CIFAR10_ROOT_DIR),
                                                     train=False,
                                                     transform=create_transform(config, is_train=False))
     else:

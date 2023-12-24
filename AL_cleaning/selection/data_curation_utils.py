@@ -131,8 +131,8 @@ def update_trainer_for_simulation(selector: Any, seed: int) -> None:
     selector.trainer.config.defrost()
     selector.trainer.config.device = device_id
     selector.trainer.config.train.seed = seed
-    selector.trainer.config.train.dataloader.num_workers = 0
-    selector.trainer.config.validation.dataloader.num_workers = 0
+    selector.trainer.config.train.dataloader.num_workers = 1
+    selector.trainer.config.validation.dataloader.num_workers = 1
     selector.trainer.config.freeze()
     selector.trainer.device = torch.device(device_id)
 

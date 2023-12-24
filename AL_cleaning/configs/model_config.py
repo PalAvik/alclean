@@ -146,6 +146,9 @@ config.augmentation.elastic_transform.alpha = 35
 config.augmentation.elastic_transform.p_apply = 0.5
 
 config.augmentation.random_crop = ConfigNode()
+config.augmentation.random_crop.padding = 4
+config.augmentation.random_crop.fill = 0
+config.augmentation.random_crop.padding_mode = 'reflect'
 config.augmentation.random_crop.scale = (0.9, 1.0)
 
 config.augmentation.gaussian_noise = ConfigNode()

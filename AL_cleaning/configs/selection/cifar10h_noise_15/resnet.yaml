@@ -2,6 +2,6 @@ selector:
   type: ['PosteriorBasedSelectorJoint']
   model_name: 'Vanilla'
   model_config_path: 'AL_cleaning/configs/models/cifar10h_noise_15/resnet.yaml'
-  # use_active_relabelling: True
-  # output_directory: 'SelectorResults/cifar10h_noise_15'
+  use_active_relabelling: True
+  output_directory: 'SelectorResults/cifar10h_noise_15/vanilla_model/val'
 
