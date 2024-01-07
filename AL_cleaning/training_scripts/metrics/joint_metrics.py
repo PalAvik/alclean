@@ -130,7 +130,7 @@ class JointMetrics():
         Logs histogram of loss values of one of the co-teaching models.
         """
         writer.add_histogram('loss/all', loss_values, epoch)
-        writer.add_histogram('loss/ambiguous_noise', loss_values[self.ambiguous_mislabelled_ids], epoch)
+        # writer.add_histogram('loss/ambiguous_noise', loss_values[self.ambiguous_mislabelled_ids], epoch)
         writer.add_histogram('loss/clear_noise', loss_values[self.clear_mislabelled_ids], epoch)
 
     def log_dropped_images(self, writer: SummaryWriter, predictions: np.ndarray, epoch: int) -> None:

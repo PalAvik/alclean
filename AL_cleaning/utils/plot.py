@@ -28,15 +28,15 @@ def plot_confusion_matrix(y_true: List[int],
         cm = confusion_matrix(y_true=y_true, y_pred=y_pred, normalize="true")
     cm = np.around(cm, decimals=2)
 
-    fig, ax = plt.subplots(figsize=(7, 8))
+    fig, ax = plt.subplots(figsize=(40, 40))
     sns.heatmap(cm, annot=True, ax=ax, fmt='g', vmin=0.0, vmax=0.50,
                 cmap='BuPu', cbar=False, annot_kws={"fontsize": 13})
 
     # labels, title and ticks
-    ax.set_xlabel('Sampled labels', fontsize=15, labelpad=10)
-    ax.set_ylabel('True labels', fontsize=15, labelpad=10)
+    ax.set_xlabel('Sampled labels', fontsize=15, labelpad=len(label_names))
+    ax.set_ylabel('True labels', fontsize=15, labelpad=len(label_names))
     ax.set_title('Class Confusion Matrix', fontsize=15)
-    ax.set_xticklabels(label_names, fontsize=13)
+    ax.set_xticklabels(label_names, fontsize=13, rotation = 90)
     ax.set_yticklabels(label_names, fontsize=13)
 
     if save_path:

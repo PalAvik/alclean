@@ -1,0 +1,7 @@
+selector:
+  type: ['PosteriorBasedSelectorJoint'] # 'PosteriorBasedSelectorJoint', 'PosteriorBasedSelector', 'BaldSelector'
+  model_name: 'Coteaching'
+  model_config_path: 'AL_cleaning/configs/models/cub_noise_20/resnet_co_teaching.yaml'
+  use_active_relabelling: True
+  output_directory: 'SelectorResults/cub_noise_20/co_teaching/PosteriorBasedSelectorJoint/train'
+

@@ -8,6 +8,7 @@ import pandas as pd
 
 from default_paths import MAIN_SIMULATION_DIR, MODEL_SELECTION_BENCHMARK_DIR, FIGURE_DIR
 from AL_cleaning.datasets.cifar10_utils import get_cifar10_label_names
+from AL_cleaning.datasets.imagenetdogs_utils import get_imagenetdogs_label_names
 from AL_cleaning.training_scripts.model_inference import inference_ensemble
 from AL_cleaning.training_scripts.utils import create_logger, load_model_config, load_selector_config
 from AL_cleaning.selection.selectors.label_based import cross_entropy
@@ -87,12 +88,13 @@ def main(args: argparse.Namespace) -> None:
 
     # Aggregate multiple runs
     group_cols = ['model', 'dataset']
-    df_grouped = df.groupby(group_cols, as_index=False)['accuracy', 'count', 'cross_entropy'].agg([np.mean, np.std])
+    df_grouped = df.groupby(group_cols, as_index=False)[['accuracy', 'count', 'cross_entropy']].agg(['mean', 'std'])
     logging.info(f"\n{df_grouped.to_string()}")
 
     # Plot the observed confusion matrix
+    label_names = dataset.get_label_names()
     plot_confusion_matrix(target_labels["clean"], target_labels["noisy"],
-                          get_cifar10_label_names(), save_path=FIGURE_DIR)
+                          label_names, save_path=FIGURE_DIR)
 
 
 def benchmark_metrics(posteriors: np.ndarray,
@@ -116,7 +118,7 @@ def benchmark_metrics(posteriors: np.ndarray,
             correct += np.any(sorted_class_predictions[_i, :N] == observed_labels[_i])
         return correct * 100.0 / observed_labels.size
     elif metric_name == "cross_entropy":
-        return np.mean(cross_entropy(posteriors, np.eye(10)[observed_labels]))
+        return np.mean(cross_entropy(posteriors, np.eye(posteriors.shape[1])[observed_labels]))
     # Average accuracy per class - samples are groupped based on their true class label
     elif metric_name == "accuracy_per_class":
         vals = list()

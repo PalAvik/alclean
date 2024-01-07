@@ -6,12 +6,13 @@ import numpy as np
 import torch
 from torchvision.datasets.vision import VisionDataset
 
-from default_paths import CIFAR10_ROOT_DIR, IMAGENETDOGS_ROOT_DIR
+from default_paths import CIFAR10_ROOT_DIR, IMAGENETDOGS_ROOT_DIR, CUB_ROOT_DIR
 from AL_cleaning.configs.config_node import ConfigNode
 from AL_cleaning.datasets.cifar10_idn import CIFAR10IDN
 from AL_cleaning.datasets.cifar10 import CIFAR10Original
 from AL_cleaning.datasets.cifar10h import CIFAR10H
 from AL_cleaning.datasets.imagenetdogs import IMAGENETDOGS
+from AL_cleaning.datasets.cub import CUB
 from AL_cleaning.training_scripts.create_dataset_transforms import create_transform
 from AL_cleaning.training_scripts.utils import load_selector_config
 from AL_cleaning.utils.generics import convert_labels_to_one_hot
@@ -91,6 +92,18 @@ def get_datasets(config: ConfigNode,
                                                            transform=create_transform(config, is_train=True),
                                                            noise_temperature=config.dataset.noise_temperature)
         val_dataset = dataset_with_indices(IMAGENETDOGS)(root=str(IMAGENETDOGS_ROOT_DIR),
+                                                         train=False,
+                                                         noise_rate=config.dataset.noise_rate,
+                                                         transform=create_transform(config, is_train=False),
+                                                         noise_temperature=config.dataset.noise_temperature)
+    
+    elif config.dataset.name == "CUB":
+        train_dataset = dataset_with_indices(CUB)(root=str(CUB_ROOT_DIR),
+                                                           train=True,
+                                                           noise_rate=config.dataset.noise_rate,
+                                                           transform=create_transform(config, is_train=True),
+                                                           noise_temperature=config.dataset.noise_temperature)
+        val_dataset = dataset_with_indices(CUB)(root=str(CUB_ROOT_DIR),
                                                          train=False,
                                                          noise_rate=config.dataset.noise_rate,
                                                          transform=create_transform(config, is_train=False),

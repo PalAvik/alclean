@@ -21,8 +21,8 @@ class BaldSelector(SampleSelector):
         super().__init__(num_samples=num_samples, allow_repeat_samples=False, **kwargs)
 
         assert posteriors.shape[2] == self.num_samples
-        assert posteriors.shape[1] == 1
-        posteriors = np.squeeze(posteriors, axis=1)
+        assert posteriors.shape[0] == 1
+        posteriors = np.squeeze(posteriors, axis=0)
 
         self.posteriors = posteriors
         self.num_samples = num_samples
@@ -48,8 +48,8 @@ class BaldSelector(SampleSelector):
 
         # Inputs
         dataset = self.trainer.train_loader.dataset
-        learning_rate = 0.0025
-        num_epochs = 20
+        learning_rate = 1e-6
+        num_epochs = 10
 
         # Create a dataset and dataloader object.
         logging.info(f"Updating posteriors, number of relabels count: {iteration_id}")

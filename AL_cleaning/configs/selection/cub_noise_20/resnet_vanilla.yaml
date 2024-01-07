@@ -1,0 +1,7 @@
+selector:
+  type: ['PosteriorBasedSelectorJoint'] # 'PosteriorBasedSelectorJoint', 'PosteriorBasedSelector', 'BaldSelector'
+  model_name: 'Vanilla'
+  model_config_path: 'AL_cleaning/configs/models/cub_noise_20/resnet_vanilla.yaml'
+  use_active_relabelling: True
+  output_directory: 'SelectorResults/cub_noise_20/vanilla/PosteriorBasedSelectorJoint/train'
+

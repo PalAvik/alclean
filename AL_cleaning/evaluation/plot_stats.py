@@ -200,8 +200,8 @@ def plot_stats(stats: Dict[str, SimulationStatsDistribution],
                                            fontsize=fontsize,
                                            figsize=(11, 10),
                                            plot_n_not_ambiguous_noise_cases=True)
-    if dataset_name != "NoisyChestXray":
-        plot_minimal_sampler(stats, n_samples, ax, fontsize=fontsize, legend_loc=legend_loc)
+    # if dataset_name != "NoisyChestXray":
+    #     plot_minimal_sampler(stats, n_samples, ax, fontsize=fontsize, legend_loc=legend_loc)
     if save_path:
         fig.savefig(save_path / f"simulation_label_accuracy_{filename_suffix}.pdf", bbox_inches='tight')
         fig.savefig(save_path / f"simulation_label_accuracy_{filename_suffix}.png", bbox_inches='tight')

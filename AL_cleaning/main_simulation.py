@@ -55,7 +55,7 @@ def main(args: argparse.Namespace) -> None:
     if dataset.name == "NoisyChestXray":
         relabel_budget = min(int(n_samples * expected_noise_rate * 2.5), n_samples)
     else:
-        relabel_budget = min(int(n_samples * expected_noise_rate * 3.0), n_samples)
+        relabel_budget = min(int(n_samples * expected_noise_rate * 1.0), n_samples)
 
     logging.info(f"Expected noise rate {expected_noise_rate} - Allocated relabelling budget {relabel_budget}")
 

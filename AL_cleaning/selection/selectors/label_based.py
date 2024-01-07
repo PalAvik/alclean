@@ -148,8 +148,8 @@ class PosteriorBasedSelector(LabelDistributionBasedSampler):
         # Inputs
         dataset = self.trainer.train_loader.dataset
 
-        learning_rate = 0.001  # for CXR experiments: 1e-5 for SSL, 1e-6 for vanilla
-        num_epochs = 20
+        learning_rate = 1e-6  # 1e-6 for vanilla
+        num_epochs = 10
         logging.info(f"Learning rate: {learning_rate} - num finetuning epochs: {num_epochs}")
 
         # Create a dataset and dataloader object.

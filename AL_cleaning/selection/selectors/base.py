@@ -70,6 +70,7 @@ class SampleSelector(object):
         self.validate_annotation_request(max_cases)
         sample_scores = self.get_relabelling_scores(current_labels)
         sample_ids = np.argsort(sample_scores)[::-1]
+
         if not self._allow_repeat_samples:
             mask = np.ones(self.num_samples, dtype=bool)
             mask[self._already_selected_cases] = False

@@ -22,7 +22,7 @@ def _get_dataset_stats(
 
 
 def create_transform(config: ConfigNode, is_train: bool) -> Callable:
-    if config.dataset.name in ["IMAGENETDOGS"]:
+    if config.dataset.name in ["IMAGENETDOGS", "CUB"]:
         return create_imagenetdogs_transform(config, is_train)
     elif config.dataset.name in ["CIFAR10", "CIFAR10H", "CIFAR10IDN", "CIFAR10H_TRAIN_VAL", "CIFAR10SYM"]:
         return create_cifar_transform(config, is_train)

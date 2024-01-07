@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
 import csv
+import pickle
 import networkx as nx
 import nltk
 nltk.download('wordnet')
@@ -91,3 +92,17 @@ def create_imagenetdogs_semantic_graph(root, breeds_synset, plot_graph=False):
                 sibling_labels[syn].append(child)
     
     return subtree_all_breeds, sibling_labels, new_subset_labels
+
+
+def save_class_labels_to_file(root, class_to_idx_dict):
+    save_file_path = Path(root) / 'class_to_idx.pkl'
+    pickle.dump(class_to_idx_dict, open(save_file_path,'wb'))
+
+
+def get_imagenetdogs_label_names(root):
+    file_path = Path(root) / 'class_to_idx.pkl'
+    class_to_idx_dict = pickle.load(open(file_path,'rb'))
+    label_names = [None for _ in range(len(class_to_idx_dict))]
+    for k,v in class_to_idx_dict.items():
+        label_names[v] = k
+    return label_names

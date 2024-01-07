@@ -64,6 +64,7 @@ def get_selector(_type: str, cfg: ConfigNode, **pars: Any) -> SampleSelector:
                             num_samples=num_samples,
                             num_classes=num_classes,
                             name=name,
+                            output_directory=output_directory,
                             trainer=trainer,
                             use_active_relabelling=use_active_relabelling)
 

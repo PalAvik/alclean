@@ -39,7 +39,8 @@ venv/
 ENV/
 
 # Data (symlinks) directory, model checkpoints, tensorboard logs etc.
-data/
+data/CUB/raw
+data/IMAGENETDOGS/raw
 logs/
 wandb/
 jobs/*.out
