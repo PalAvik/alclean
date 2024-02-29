@@ -1,3 +1,8 @@
+#  ------------------------------------------------------------------------------------------
+#  Copyright (c) Microsoft Corporation. All rights reserved.
+#  Licensed under the MIT License (MIT). See LICENSE in the repo root for license information.
+#  ------------------------------------------------------------------------------------------
+
 import argparse
 import logging
 from pathlib import Path
@@ -7,7 +12,6 @@ import numpy as np
 import pandas as pd
 
 from default_paths import MAIN_SIMULATION_DIR, MODEL_SELECTION_BENCHMARK_DIR, FIGURE_DIR
-from AL_cleaning.datasets.cifar10_utils import get_cifar10_label_names
 from AL_cleaning.datasets.imagenetdogs_utils import get_imagenetdogs_label_names
 from AL_cleaning.training_scripts.model_inference import inference_ensemble
 from AL_cleaning.training_scripts.utils import create_logger, load_model_config, load_selector_config

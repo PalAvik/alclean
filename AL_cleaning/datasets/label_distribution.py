@@ -1,3 +1,8 @@
+#  ------------------------------------------------------------------------------------------
+#  Copyright (c) Microsoft Corporation. All rights reserved.
+#  Licensed under the MIT License (MIT). See LICENSE in the repo root for license information.
+#  ------------------------------------------------------------------------------------------
+
 import numpy as np
 
 class LabelDistribution(object):
@@ -63,14 +68,14 @@ class LabelDistribution(object):
         return self.random_state.choice(self.num_classes, 1, p=self.distribution[sample_idx])[0]
 
     def add_noise_to_distribution(self, offset: float, distribution: np.ndarray, noise_model_type: str) -> np.ndarray:
-        from AL_cleaning.datasets.label_noise_model import get_cifar10_asym_noise_model
-        from AL_cleaning.datasets.label_noise_model import get_cifar10_sym_noise_model
+        from AL_cleaning.datasets.label_noise_model import get_asym_noise_model
+        from AL_cleaning.datasets.label_noise_model import get_sym_noise_model
 
         # Create noise model
         if noise_model_type == 'sym':
-            noise_model = get_cifar10_sym_noise_model(eta=1.0)
+            noise_model = get_sym_noise_model(eta=1.0)
         elif noise_model_type == 'asym':
-            noise_model = get_cifar10_asym_noise_model(eta=1.0)
+            noise_model = get_asym_noise_model(eta=1.0)
         else:
             raise ValueError("Unknown noise model type")
         np.fill_diagonal(noise_model, 0.0)

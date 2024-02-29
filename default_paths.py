@@ -2,7 +2,6 @@ from pathlib import Path
 
 PROJECT_ROOT_DIR = Path(__file__).parent.resolve()
 INNEREYE_DQ_DIR = PROJECT_ROOT_DIR / "AL_cleaning"
-CIFAR10_ROOT_DIR = PROJECT_ROOT_DIR / "data" / "CIFAR10"
 IMAGENETDOGS_ROOT_DIR = PROJECT_ROOT_DIR / "data" / "IMAGENETDOGS"
 CUB_ROOT_DIR = PROJECT_ROOT_DIR / "data" / "CUB"
 

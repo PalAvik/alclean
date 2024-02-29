@@ -1,3 +1,8 @@
+#  ------------------------------------------------------------------------------------------
+#  Copyright (c) Microsoft Corporation. All rights reserved.
+#  Licensed under the MIT License (MIT). See LICENSE in the repo root for license information.
+#  ------------------------------------------------------------------------------------------
+
 import logging
 from typing import Any, Tuple, Type
 
@@ -6,11 +11,8 @@ import numpy as np
 import torch
 from torchvision.datasets.vision import VisionDataset
 
-from default_paths import CIFAR10_ROOT_DIR, IMAGENETDOGS_ROOT_DIR, CUB_ROOT_DIR
+from default_paths import IMAGENETDOGS_ROOT_DIR, CUB_ROOT_DIR
 from AL_cleaning.configs.config_node import ConfigNode
-from AL_cleaning.datasets.cifar10_idn import CIFAR10IDN
-from AL_cleaning.datasets.cifar10 import CIFAR10Original
-from AL_cleaning.datasets.cifar10h import CIFAR10H
 from AL_cleaning.datasets.imagenetdogs import IMAGENETDOGS
 from AL_cleaning.datasets.cub import CUB
 from AL_cleaning.training_scripts.create_dataset_transforms import create_transform
@@ -38,11 +40,6 @@ def load_dataset_and_initial_labels_for_simulation(path_config: str, on_val_set:
     _train_dataset, _val_dataset = get_datasets(config, use_augmentation=True, use_noisy_labels_for_validation=True)
     dataset = _val_dataset if on_val_set else _train_dataset
     initial_labels = convert_labels_to_one_hot(dataset.targets, n_classes=dataset.num_classes)  # type: ignore
-
-    # Make sure that the assigned label does not have probability 0
-    if config.dataset.name not in ["NoisyChestXray", "Kaggle", "CIFAR10IDN", "CIFAR10SYM"] and \
-       config.dataset.noise_offset == 0.0:
-        assert all(dataset.label_distribution.distribution[initial_labels.astype(bool)] > 0.0)  # type: ignore
     dataset.name = config.dataset.name  # type: ignore
     return dataset, initial_labels
 
@@ -61,31 +58,8 @@ def get_datasets(config: ConfigNode,
                              Otherwise, a new label is fetched from the distribution at each get item call.
     """
     num_samples = config.dataset.num_samples
-
-    # The CIFAR10H training set is the CIFAR10 test-set, and so the validation-set is the CIFAR10 training-set
-    if config.dataset.name == 'CIFAR10H':
-        train_dataset = dataset_with_indices(CIFAR10H)(root=str(CIFAR10_ROOT_DIR),
-                                                       transform=create_transform(config, use_augmentation),
-                                                       noise_temperature=config.dataset.noise_temperature,
-                                                       noise_offset=config.dataset.noise_offset,
-                                                       num_samples=num_samples)
-        val_dataset = dataset_with_indices(CIFAR10Original)(root=str(CIFAR10_ROOT_DIR),
-                                                            train=True,
-                                                            transform=create_transform(config, is_train=False))
-
-    elif config.dataset.name == "CIFAR10IDN":
-        train_dataset = dataset_with_indices(CIFAR10IDN)(root=str(CIFAR10_ROOT_DIR),
-                                                         train=False,
-                                                         transform=create_transform(config, is_train=True),
-                                                         noise_rate=config.dataset.noise_rate,
-                                                         use_fixed_labels=use_fixed_labels)
-        val_dataset = dataset_with_indices(CIFAR10IDN)(root=str(CIFAR10_ROOT_DIR),
-                                                       train=True,
-                                                       transform=create_transform(config, is_train=False),
-                                                       noise_rate=config.dataset.noise_rate,
-                                                       use_fixed_labels=use_fixed_labels)
     
-    elif config.dataset.name == "IMAGENETDOGS":
+    if config.dataset.name == "IMAGENETDOGS":
         train_dataset = dataset_with_indices(IMAGENETDOGS)(root=str(IMAGENETDOGS_ROOT_DIR),
                                                            train=True,
                                                            noise_rate=config.dataset.noise_rate,
@@ -108,18 +82,7 @@ def get_datasets(config: ConfigNode,
                                                          noise_rate=config.dataset.noise_rate,
                                                          transform=create_transform(config, is_train=False),
                                                          noise_temperature=config.dataset.noise_temperature)
-    
-    # Default CIFAR10 training and validation sets
-    elif config.dataset.name == 'CIFAR10':
-        if num_samples is not None:
-            raise ValueError("Dataset subset selection is not implemented for default CIFAR10.")
-
-        train_dataset = dataset_with_indices(CIFAR10Original)(root=str(CIFAR10_ROOT_DIR),
-                                                      train=True,
-                                                      transform=create_transform(config, use_augmentation))
-        val_dataset = dataset_with_indices(CIFAR10Original)(root=str(CIFAR10_ROOT_DIR),
-                                                    train=False,
-                                                    transform=create_transform(config, is_train=False))
+        
     else:
         raise ValueError('Unsupported dataset choice')
 

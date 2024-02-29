@@ -1,43 +1,12 @@
+#  ------------------------------------------------------------------------------------------
+#  Copyright (c) Microsoft Corporation. All rights reserved.
+#  Licensed under the MIT License (MIT). See LICENSE in the repo root for license information.
+#  ------------------------------------------------------------------------------------------
+
 import numpy as np
 
-from default_paths import CIFAR10_ROOT_DIR
-from AL_cleaning.datasets.cifar10h import CIFAR10H
-from AL_cleaning.selection.simulation_statistics import get_ambiguous_sample_ids
 
-from sklearn.metrics import confusion_matrix
-
-
-def get_cifar10h_confusion_matrix(temperature: float = 1.0, only_difficult_cases: bool = False) -> np.ndarray:
-    """
-    Generates a class confusion matrix based on the label distribution in CIFAR10H.
-    """
-    cifar10h_labels = CIFAR10H.download_cifar10h_labels(str(CIFAR10_ROOT_DIR))
-
-    if only_difficult_cases:
-        ambiguous_sample_ids = get_ambiguous_sample_ids(cifar10h_labels)
-        cifar10h_labels = cifar10h_labels[ambiguous_sample_ids, :]
-
-    # Temperature scale the original distribution
-    if temperature > 1.0:
-        orig_distribution = cifar10h_labels / np.sum(cifar10h_labels, axis=1, keepdims=True)
-        _d = np.power(orig_distribution, 1. / temperature)
-        scaled_distribution = _d / np.sum(_d, axis=1, keepdims=True)
-        sample_counts = (scaled_distribution * np.sum(cifar10h_labels, axis=1, keepdims=True)).astype(np.int64)
-    else:
-        sample_counts = cifar10h_labels
-
-    y_pred, y_true = list(), list()
-    for image_index in range(sample_counts.shape[0]):
-        image_label_counts = sample_counts[image_index]
-        for _iter, _el in enumerate(image_label_counts.tolist()):
-            y_pred.extend([_iter] * _el)
-        y_true.extend([np.argmax(image_label_counts)] * np.sum(image_label_counts))
-    cm = confusion_matrix(y_true, y_pred, normalize="true")
-
-    return cm
-
-
-def get_cifar10_asym_noise_model(eta: float = 0.3) -> np.ndarray:
+def get_asym_noise_model(eta: float = 0.3) -> np.ndarray:
     """
     CLASS-DEPENDENT ASYMMETRIC LABEL NOISE
     https://proceedings.neurips.cc/paper/2018/file/f2925f97bc13ad2852a7a551802feea0-Paper.pdf
@@ -59,7 +28,7 @@ def get_cifar10_asym_noise_model(eta: float = 0.3) -> np.ndarray:
     return conf_mat / np.sum(conf_mat, axis=1, keepdims=True)
 
 
-def get_cifar10_sym_noise_model(eta: float = 0.3) -> np.ndarray:
+def get_sym_noise_model(eta: float = 0.3) -> np.ndarray:
     """
     Symmetric LABEL NOISE
     :param eta: The likelihood of true label switching from true class to rest of the classes.
