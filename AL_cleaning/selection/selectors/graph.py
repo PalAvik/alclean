@@ -20,7 +20,7 @@ from AL_cleaning.selection.selectors.label_based import LabelDistributionBasedSa
 
 class GraphBasedSelector(LabelDistributionBasedSampler):
     """
-    TBD
+    Graph based selector that uses label diffusion to propagate labels across the graph.
     """
 
     def __init__(self,
@@ -87,7 +87,7 @@ class GraphBasedSelector(LabelDistributionBasedSampler):
         # Normalise current label distributions
         assert isinstance(current_labels, np.ndarray)
 
-        from InnerEyeDataQuality.utils.generic import convert_labels_to_one_hot
+        from AL_cleaning.utils.generic import convert_labels_to_one_hot
         input_label_distribution = convert_labels_to_one_hot(np.argmax(current_labels, axis=1),
                                                              n_classes=self.num_classes)
 

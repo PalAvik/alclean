@@ -7,7 +7,7 @@ import torch
 import torchvision
 from torch import nn
 
-from InnerEyeDataQuality.configs.config_node import ConfigNode
+from AL_cleaning.configs.config_node import ConfigNode
 
 
 class Network(nn.Module):

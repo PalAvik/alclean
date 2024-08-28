@@ -26,6 +26,11 @@ def def_value():
 
 
 def create_nx_graph_from_edges(edge_file):
+    """
+    Generate a networkX graph from edge information.
+    :param edge_file: file containing edge information
+    :return: The networkX graph and node labels
+    """
     graph = nx.DiGraph()
     edge_dict = defaultdict(def_value)
     node_labels = defaultdict(def_value)
@@ -49,6 +54,13 @@ def create_nx_graph_from_edges(edge_file):
 
 
 def create_imagenetdogs_semantic_graph(root, breeds_synset, plot_graph=False):
+    """
+    Create semantic graph for dog breed labels of ImageNet
+    :param root: The root directory of the imagenet synset graph edge file
+    :param breeds_synset: Classes of StanfordDogs which are subset of ImageNet classes
+    :param plot_graph: Choice to visualize the graph
+    :return: The StanfordDogs subtree, sibling labels dictionary and node labels subset
+    """
     imagenet_graph_edges_file = Path(root) / 'imagenet_isa.txt'
     imagenet_graph, node_labels = create_nx_graph_from_edges(imagenet_graph_edges_file)
 
@@ -95,11 +107,17 @@ def create_imagenetdogs_semantic_graph(root, breeds_synset, plot_graph=False):
 
 
 def save_class_labels_to_file(root, class_to_idx_dict):
+    """
+    Save class labels to pickle file.
+    """
     save_file_path = Path(root) / 'class_to_idx.pkl'
     pickle.dump(class_to_idx_dict, open(save_file_path,'wb'))
 
 
 def get_imagenetdogs_label_names(root):
+    """
+    Load class labels from pickle file.
+    """
     file_path = Path(root) / 'class_to_idx.pkl'
     class_to_idx_dict = pickle.load(open(file_path,'rb'))
     label_names = [None for _ in range(len(class_to_idx_dict))]

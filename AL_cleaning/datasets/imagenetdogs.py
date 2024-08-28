@@ -27,6 +27,10 @@ class IMAGENETDOGS_BASE(ImageFolder):
                  root: str,
                  transform: Optional[Callable] = None,
                  ) -> None:
+        """
+        :param root: The root directory of the dataset
+        :param transform: The transformation to apply to the images
+        """
         
         local_path_to_store_data = Path(root) / 'raw'
 
@@ -59,14 +63,22 @@ class IMAGENETDOGS(IMAGENETDOGS_BASE):
                  seed: int = 1,
                  ) -> None:
         """
-        TODO: Add detailed param description.
+        :param root: The root directory of the dataset
+        :param train: Whether to load the training or validation set
+        :param noise_rate: The rate of label noise to simulate
+        :param transform: The transformation to apply to the images
+        :param noise_temperature: The temperature parameter for the label noise distribution
+        :param seed: The random seed to use for the label noise simulation
         """
         super().__init__(root, transform=transform)
+        self.root = root
+        self.train = train
+        self.noise_rate = noise_rate
         self.seed = seed
         self.clean_targets = np.array(self.targets, dtype=np.int64)
         self.breeds_synset = [n.split('-')[0] for n in self.classes]
 
-        imagenetdogs_labels, indices = self.load_imagenetdogs_label_counts(root, noise_rate, train)
+        imagenetdogs_labels, indices = self.load_imagenetdogs_label_counts()
         
         self.indices = indices
         self.num_samples = indices.shape[0]
@@ -103,16 +115,20 @@ class IMAGENETDOGS(IMAGENETDOGS_BASE):
         logging.info(f"Ambiguous mislabeled cases: {100 * len(self.ambiguous_mislabelled_cases) / self.num_samples}%")
         logging.info(f"Clear mislabeled cases: {100 * len(self.clear_mislabeled_cases) / self.num_samples}%\n")
 
-    def load_imagenetdogs_label_counts(self, root, noise_rate, train, seed=1):
-        label_counts_path = Path(root) / 'simulated_label_counts.npy'
-        train_indices_save_path = Path(root) / 'train_indices.npy'
-        val_indices_save_path = Path(root) / 'val_indices.npy'
-        _, sibling_labels, _ = create_imagenetdogs_semantic_graph(root, self.breeds_synset)
+    def load_imagenetdogs_label_counts(self):
+        """
+        Load the simulated label counts for the Imagenet Dogs dataset.
+        :return: The label counts and indices for the dataset
+        """
+        label_counts_path = Path(self.root) / 'simulated_label_counts.npy'
+        train_indices_save_path = Path(self.root) / 'train_indices.npy'
+        val_indices_save_path = Path(self.root) / 'val_indices.npy'
+        _, sibling_labels, _ = create_imagenetdogs_semantic_graph(self.root, self.breeds_synset)
     
         if not label_counts_path.exists() or not train_indices_save_path.exists() or not val_indices_save_path.exists():
             logging.info("Simulating label counts for ImageNetDogs dataset...")
-            random_state = np.random.RandomState(seed)
-            label_counts = self.simulate_label_counts(sibling_labels, random_state, noise_rate)
+            random_state = np.random.RandomState(self.seed)
+            label_counts = self.simulate_label_counts(sibling_labels, random_state)
             np.save(open(label_counts_path, 'wb'), label_counts)
             
             indices = random_state.permutation(label_counts.shape[0])
@@ -120,18 +136,25 @@ class IMAGENETDOGS(IMAGENETDOGS_BASE):
             train_indices = indices[:train_split_amount]
             val_indices = indices[train_split_amount:]
 
-            logging.info(f"Saving generated label counts data to {root}")
+            logging.info(f"Saving generated label counts data to {self.root}")
             np.save(open(train_indices_save_path, 'wb'), train_indices)
             np.save(open(val_indices_save_path, 'wb'), val_indices)
         
         label_counts = np.load(open(label_counts_path, 'rb'))
-        indices = np.load(open(train_indices_save_path, 'rb')) if train else np.load(open(val_indices_save_path, 'rb'))
+        indices = np.load(open(train_indices_save_path, 'rb')) if self.train else np.load(open(val_indices_save_path, 'rb'))
         return label_counts, indices
     
-    def simulate_label_counts(self, sibling_labels, random_state, noise_rate=0.2, annotators=50):
+    def simulate_label_counts(self, sibling_labels, random_state, annotators=50):
+        """
+        Simulate label counts for the Imagenet Dogs dataset.
+        :param sibling_labels: The sibling labels for each class
+        :param random_state: The random state to use for the simulation
+        :param annotators: The number of annotators to simulate
+        :return: The simulated label counts
+        """
         idx_to_class = {v:k for k,v in self.class_to_idx.items()}
         noise_choice = [False, True]
-        _p = [1-noise_rate, noise_rate]
+        _p = [1-self.noise_rate, self.noise_rate]
 
         all_label_counts = []
 
@@ -171,12 +194,14 @@ class IMAGENETDOGS(IMAGENETDOGS_BASE):
 
     def __len__(self) -> int:
         """
-
         :return: The size of the dataset
         """
         return len(self.indices)
         
     def get_label_names(self) -> List[str]:
+        """
+        :return: The names of the labels in the dataset
+        """
         label_names = [k for k,_ in self.class_to_idx.items()]
         return label_names
         

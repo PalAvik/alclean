@@ -1,7 +1,12 @@
 from collections import defaultdict
 
 
-def create_cub_label_siblings(root, bird_categories, plot_graph=False):
+def create_cub_label_siblings(bird_categories):
+    """
+    Create a dictionary of sibling labels for each bird category in the CUB dataset.
+    :param bird_categories: List of bird categories in the CUB dataset
+    :return: Dictionary of sibling labels for each bird category
+    """
     sibling_labels = defaultdict(list)
 
     for category in bird_categories:
